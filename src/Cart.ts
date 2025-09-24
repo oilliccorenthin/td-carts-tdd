@@ -1,6 +1,9 @@
+import { calculerTVA } from './utils/tva';
+
 type CartItem = {
 	product: string;
 	quantity: number;
+	price: number;
 };
 
 export class Cart {
@@ -29,5 +32,15 @@ export class Cart {
 	}
 	getItems() {
 		return this.items;
+	}
+	totals() {
+		const ht = this.items.reduce(
+			(acc, item) => acc + item.price * item.quantity,
+			0,
+		);
+		const tva = calculerTVA(ht);
+		const ttc = ht + tva;
+
+		return { ht, tva, ttc };
 	}
 }
