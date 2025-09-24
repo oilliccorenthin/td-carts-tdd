@@ -1,5 +1,7 @@
 import { Cart } from '../src/Cart';
 
+jest.useFakeTimers();
+
 describe('Cart', () => {
 	test('ajout d’un article avec add()', () => {
 		const cart = new Cart();
@@ -52,5 +54,24 @@ describe('Cart', () => {
 		expect(totals.ht).toBeCloseTo(12, 2);
 		expect(totals.tva).toBeCloseTo(2.4, 2);
 		expect(totals.ttc).toBeCloseTo(14.4, 2);
+	});
+	test('recalcul debouncé des totaux après 200ms', () => {
+		const cart = new Cart();
+		const callback = jest.fn();
+
+		cart.onTotalsChange(callback);
+
+		cart.add({ product: 'pomme', quantity: 1, price: 2 });
+		cart.add({ product: 'banane', quantity: 2, price: 3 });
+
+		expect(callback).not.toHaveBeenCalled();
+
+		jest.advanceTimersByTime(200);
+
+		expect(callback).toHaveBeenCalledWith({
+			ht: 8, // 1*2 + 2*3
+			tva: 1.6,
+			ttc: 9.6,
+		});
 	});
 });
