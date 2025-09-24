@@ -5,6 +5,10 @@ type CartItem = {
 
 export class Cart {
 	private items: CartItem[] = [];
-	add(item: CartItem) {}
-	getItems() {}
+	add(item: CartItem) {
+		this.items.push(item);
+	}
+	getItems() {
+		return this.items;
+	}
 }
